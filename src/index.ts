@@ -1,7 +1,8 @@
 import express from 'express';
+import bodyParser from 'body-parser';
 import productRoutes from "./routes/productRoutes"
 import { sequelize } from './utils/database';
-const cors = require("cors")
+import cors from 'cors'
 
 async function verifyDbConnection() {
     try {
@@ -18,14 +19,11 @@ let corsOptions = {
     origin: "*"
 }
 
-
-
-
-
-
-
 const app = express();
+
 app.use(cors(corsOptions))
+app.use(bodyParser.json())
+
 const PORT = process.env.PORT || 3000;
 
 app.use("/products", productRoutes)
@@ -34,4 +32,3 @@ app.use("/products", productRoutes)
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
-
