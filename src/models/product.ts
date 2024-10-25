@@ -1,11 +1,6 @@
 import { Product } from "../utils/types";
 import { Product as ProductModel } from "../utils/database";
-
-
-
-
-
-
+import { get } from "http";
 
 export async function getAllProducts(Database: typeof ProductModel): Promise<Product[] | []> {
     const result = await Database.findAll();
@@ -13,14 +8,13 @@ export async function getAllProducts(Database: typeof ProductModel): Promise<Pro
 }
 
 
-export function addProduct(Database: typeof ProductModel, product: Product): Product | boolean {
-    const newProduct = Database.build(product)
+export async function addProduct(Database: typeof ProductModel, product: Product): Promise<Product | boolean> {
     try {
-        newProduct.save()
+        const newProduct = await Database.build(product)
+        await newProduct.save()
         return newProduct
     }
     catch (err) {
-        console.log("Could not save product to database", err)
         return false
     }
 }
@@ -34,21 +28,21 @@ export async function getProduct(Database: typeof ProductModel, id: number): Pro
     return product
 }
 
-export async function changeProduct(Database: typeof ProductModel, id: number, product: Product): Promise<boolean> {
+export async function changeProduct(Database: typeof ProductModel, id: number, product: Product): Promise<Product | boolean> {
     try {
         const { name, image, price, category } = product
-        await Database.update({
+        const editedProduct = await Database.update({
             name,
             image,
             price,
             category
         },
             {
-                where: {
-                    id: id
-                }
+                where: { id: id }
             })
-        return true
+        const newValues = await Database.findAll({ where: { id: id } })
+
+        return newValues
     }
     catch (err) {
         console.log("Oops somethign went wrong", err)
@@ -58,33 +52,14 @@ export async function changeProduct(Database: typeof ProductModel, id: number, p
 
 export async function deleteProduct(Database: typeof ProductModel, id: number): Promise<boolean> {
     try {
-        await Database.destroy({ where: { id: id } })
-        return true
+        const deleteResult = await Database.destroy({ where: { id: id } })
+        if (deleteResult) {
+            return true
+        }
     }
     catch (err) {
         console.log(err)
         return false
     }
+    return false
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

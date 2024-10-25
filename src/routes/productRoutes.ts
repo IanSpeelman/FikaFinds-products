@@ -5,10 +5,10 @@ const router = Router()
 
 
 router.get("/", fetchAllProducts)
-router.post("/add", newProduct)
+router.post("/", newProduct)
 router.get("/:id", fetchProduct)
-router.post("/edit/:id", editProduct)
-router.delete("/delete/:id", removeProduct)
+router.patch("/edit/:id", editProduct)
+router.delete("/:id", removeProduct)
 
 
 export default router;
