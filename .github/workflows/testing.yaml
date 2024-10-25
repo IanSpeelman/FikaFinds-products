@@ -1,5 +1,5 @@
 name: Unit Testing
-on: pusho
+on: push
 
 env:
   DOCKER_IMAGE_NAME: FikaFinds-Products
