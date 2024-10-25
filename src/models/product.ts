@@ -1,38 +1,26 @@
-import { DataTypes } from "sequelize"
-import { sequelize } from "../utils/database"
 import { Product } from "../utils/types";
+import { Product as ProductModel } from "../utils/database";
+import { get } from "http";
 
-const Product = sequelize.define("product", {
-    name: { type: DataTypes.STRING, allowNull: false, },
-    image: { type: DataTypes.STRING, allowNull: false, },
-    price: { type: DataTypes.INTEGER, allowNull: false, },
-    category: { type: DataTypes.STRING, allowNull: false, },
-    stock: { type: DataTypes.INTEGER, allowNull: true, },
-    amount: { type: DataTypes.INTEGER, allowNull: true, }
-});
-(async () => {
-    await sequelize.sync({ alter: true });
-})();
-
-export async function getAllProducts(): Promise<Product[] | []> {
-    const result = await Product.findAll();
+export async function getAllProducts(Database: typeof ProductModel): Promise<Product[] | []> {
+    const result = await Database.findAll();
     return result
 }
 
-export function addProduct(product: Product): Product | boolean {
-    const newProduct = Product.build(product)
+
+export async function addProduct(Database: typeof ProductModel, product: Product): Promise<Product | boolean> {
     try {
-        newProduct.save()
+        const newProduct = await Database.build(product)
+        await newProduct.save()
         return newProduct
     }
     catch (err) {
-        console.log("Could not save product to database", err)
         return false
     }
 }
 
-export async function getProduct(id: number): Promise<Product> {
-    const product = await Product.findAll({
+export async function getProduct(Database: typeof ProductModel, id: number): Promise<Product> {
+    const product = await Database.findAll({
         where: {
             id: id
         }
@@ -40,21 +28,21 @@ export async function getProduct(id: number): Promise<Product> {
     return product
 }
 
-export async function changeProduct(id: number, product: Product): Promise<boolean> {
+export async function changeProduct(Database: typeof ProductModel, id: number, product: Product): Promise<Product | boolean> {
     try {
         const { name, image, price, category } = product
-        await Product.update({
+        const editedProduct = await Database.update({
             name,
             image,
             price,
             category
         },
             {
-                where: {
-                    id: id
-                }
+                where: { id: id }
             })
-        return true
+        const newValues = await Database.findAll({ where: { id: id } })
+
+        return newValues
     }
     catch (err) {
         console.log("Oops somethign went wrong", err)
@@ -62,35 +50,16 @@ export async function changeProduct(id: number, product: Product): Promise<boole
     }
 }
 
-export async function deleteProduct(id: number): Promise<boolean> {
+export async function deleteProduct(Database: typeof ProductModel, id: number): Promise<boolean> {
     try {
-        await Product.destroy({ where: { id: id } })
-        return true
+        const deleteResult = await Database.destroy({ where: { id: id } })
+        if (deleteResult) {
+            return true
+        }
     }
     catch (err) {
         console.log(err)
         return false
     }
+    return false
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
