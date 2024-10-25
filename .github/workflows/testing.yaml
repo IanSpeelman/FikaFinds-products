@@ -1,5 +1,5 @@
 name: Unit Testing
-on: pusho
+on: push
 
 env:
   DOCKER_IMAGE_NAME: FikaFinds-Products
@@ -19,9 +19,9 @@ jobs:
         with:
           context: .
           load: true
-          tags: ${{DOCKER_IMAGE_NAME}}:latest
+          tags: ${{env.DOCKER_IMAGE_NAME}}:latest
           cache-from: type=gha
           cache-to: type=gha, mode=max
 
       - name: run tests in docker
-        run: docker run ${{DOCKER_IMAGE_NAME}}:latest npm test
+        run: docker run ${{env.DOCKER_IMAGE_NAME}}:latest npm test
