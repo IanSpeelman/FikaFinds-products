@@ -2,7 +2,7 @@ name: Unit Testing
 on: push
 
 env:
-  DOCKER_IMAGE_NAME: FikaFinds-Products
+  DOCKER_IMAGE_NAME: fikafinds-products
 
 jobs:
   docker-build:
