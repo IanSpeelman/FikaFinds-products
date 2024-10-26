@@ -14,8 +14,8 @@ The Products Service is a crucial component of the FikaFinds e-commerce platform
 
 The application is part of a microservices architecture:
 
-- [**FikaFinds UI (This repository)**](https://github.com/IanSpeelman/FikaFinds-ui): Frontend interface built with React and Node.js
-- [**Products Service**](https://github.com/IanSpeelman/FikaFinds-products): Handles product-related CRUD operations
+- [**FikaFinds UI**](https://github.com/IanSpeelman/FikaFinds-ui): Frontend interface built with React and Node.js
+- [**Products Service(This repository)**](https://github.com/IanSpeelman/FikaFinds-products): Handles product-related CRUD operations
 - **Authentication Service**: (Coming soon) Will handle user authentication
 - **Orders Service**: (Coming soon) Will manage order processing
 
