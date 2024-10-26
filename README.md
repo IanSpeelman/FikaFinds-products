@@ -68,8 +68,8 @@ Create a `.env` file in the root directory and copy it to the UI folder:
 DBUSER=your_database_user
 DBPASS=your_database_password
 DBDB=your_database_name
-DBHOST=your_database_host
-VITE_PRODUCT_HOST=your_products_host
+DBHOST=service-database
+VITE_PRODUCT_HOST=http://localhost:3000
 ```
 
 **Linux/Mac:**
