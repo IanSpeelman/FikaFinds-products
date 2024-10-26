@@ -130,7 +130,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - "/home/meister/Documents/projects/FikaFinds/db:/var/lib/postgresql/data"
+      - "./db:/var/lib/postgresql/data"
     environment:
       POSTGRES_PASSWORD: ${DBPASS}
       POSTGRES_USER: ${DBUSER}
