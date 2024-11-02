@@ -153,6 +153,8 @@ describe("POST /products", () => {
             image: "test",
             price: 5,
             category: "test",
+            description: "test",
+            specifications: "key:value",
         })
 
         expect(response.status).toBe(201)
@@ -196,6 +198,8 @@ describe("PATCH /products/:id", () => {
             "image": "image",
             "price": 6,
             "category": "cat",
+            description: "test",
+            specifications: "key:value",
         })
 
         expect(response.status).toBe(200)
