@@ -1,6 +1,5 @@
 import { Product } from "../utils/types";
 import { Product as ProductModel } from "../utils/database";
-import { get } from "http";
 
 export async function getAllProducts(Database: typeof ProductModel): Promise<Product[] | []> {
     const result = await Database.findAll();

@@ -5,6 +5,7 @@ const dbHost = process.env.PRODUCTSDBHOST
 const port = process.env.PRODUCTSDBPORT
 const { Sequelize } = require('sequelize');
 import { DataTypes } from "sequelize";
+import { defaultValueSchemable } from "sequelize/types/utils"
 
 const sequelize = new Sequelize(database, user, pass, {
     dialect: 'postgres',
@@ -27,7 +28,9 @@ export const Product = sequelize.define("product", {
     price: { type: DataTypes.INTEGER, allowNull: false, },
     category: { type: DataTypes.STRING, allowNull: false, },
     stock: { type: DataTypes.INTEGER, allowNull: true, },
-    amount: { type: DataTypes.INTEGER, allowNull: true, }
+    amount: { type: DataTypes.INTEGER, allowNull: true, },
+    description: { type: DataTypes.STRING, allowNull: false, defaultValue: "null" },
+    sepcifications: { type: DataTypes.STRING, allowNull: false, defaultValue: "null" },
 });
 (async () => {
     await sequelize.sync({ alter: true });
