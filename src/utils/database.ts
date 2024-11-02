@@ -1,13 +1,14 @@
 const user = process.env.DBUSER
 const pass = process.env.DBPASS
-const database = process.env.DBDB
-const dbHost = process.env.DBHOST
+const database = process.env.DBPRODUCTS
+const dbHost = process.env.PRODUCTSDBHOST
+const port = process.env.PRODUCTSDBPORT
 const { Sequelize } = require('sequelize');
 import { DataTypes } from "sequelize";
 
 const sequelize = new Sequelize(database, user, pass, {
+    dialect: 'postgres',
     host: dbHost,
-    dialect: 'postgres'
 });
 
 (async function verifyDbConnection() {
@@ -26,9 +27,10 @@ export const Product = sequelize.define("product", {
     price: { type: DataTypes.INTEGER, allowNull: false, },
     category: { type: DataTypes.STRING, allowNull: false, },
     stock: { type: DataTypes.INTEGER, allowNull: true, },
-    amount: { type: DataTypes.INTEGER, allowNull: true, }
+    amount: { type: DataTypes.INTEGER, allowNull: true, },
+    description: { type: DataTypes.STRING, allowNull: false, },
+    specifications: { type: DataTypes.STRING, allowNull: false, },
 });
 (async () => {
     await sequelize.sync({ alter: true });
 })();
-

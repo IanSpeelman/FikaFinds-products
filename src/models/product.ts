@@ -1,6 +1,5 @@
 import { Product } from "../utils/types";
 import { Product as ProductModel } from "../utils/database";
-import { get } from "http";
 
 export async function getAllProducts(Database: typeof ProductModel): Promise<Product[] | []> {
     const result = await Database.findAll();
@@ -30,12 +29,14 @@ export async function getProduct(Database: typeof ProductModel, id: number): Pro
 
 export async function changeProduct(Database: typeof ProductModel, id: number, product: Product): Promise<Product | boolean> {
     try {
-        const { name, image, price, category } = product
+        const { name, image, price, category, description, specifications } = product
         const editedProduct = await Database.update({
             name,
             image,
             price,
-            category
+            category,
+            description,
+            specifications
         },
             {
                 where: { id: id }

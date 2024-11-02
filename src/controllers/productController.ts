@@ -2,6 +2,7 @@ import { Request, Response } from "express"
 import { addProduct, changeProduct, getAllProducts, getProduct, deleteProduct } from "../models/product"
 import { Product } from "../utils/types"
 import { Product as Database } from "../utils/database"
+import isCorrectFormat from "../utils/checkSpecificationType"
 
 export async function fetchAllProducts(req: Request, res: Response) {
     try {
@@ -19,10 +20,10 @@ export async function fetchAllProducts(req: Request, res: Response) {
 }
 
 export async function newProduct(req: Request, res: Response) {
-    const { name, image, price, category } = req.body
-    if (name && image && price && category) {
+    const { name, image, price, category, description, specifications } = req.body
+    if (name && image && price && category && description && isCorrectFormat(specifications)) {
 
-        const product: Product = { name: name, image: image, price: price, category: category }
+        const product: Product = { name, image, price, category, specifications, description }
         const newProduct = await addProduct(Database, product)
         if (newProduct) {
             res.status(201).json(newProduct)
@@ -48,9 +49,10 @@ export async function fetchProduct(req: Request, res: Response) {
 }
 
 export async function editProduct(req: Request, res: Response) {
-    const { name, image, price, category } = req.body
-    if (name && image && price && category) {
-        const newValues = { name, image, price, category }
+    const { name, image, price, category, description, specifications } = req.body
+    if (name && image && price && category && description && isCorrectFormat(specifications)) {
+
+        const newValues = { name, image, price, category, specifications, description }
         const editedProduct = await changeProduct(Database, parseInt(req.params.id), newValues)
         if (editedProduct) {
             res.status(200).json(editedProduct)
