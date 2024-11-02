@@ -1,13 +1,14 @@
 const user = process.env.DBUSER
 const pass = process.env.DBPASS
-const database = process.env.DBDB
-const dbHost = process.env.DBHOST
+const database = process.env.DBPRODUCTS
+const dbHost = process.env.PRODUCTSDBHOST
+const port = process.env.PRODUCTSDBPORT
 const { Sequelize } = require('sequelize');
 import { DataTypes } from "sequelize";
 
 const sequelize = new Sequelize(database, user, pass, {
+    dialect: 'postgres',
     host: dbHost,
-    dialect: 'postgres'
 });
 
 (async function verifyDbConnection() {
