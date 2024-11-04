@@ -235,7 +235,7 @@ docker build -t FikaFinds-products .
 Run the container:
 
 ```bash
-docker run -p 3001:3001 FikaFinds-products
+docker run -p 3000:3000 FikaFinds-products
 ```
 
 ## Project Structure
