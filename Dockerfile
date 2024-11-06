@@ -1,4 +1,4 @@
-FROM node:lts-iron
+FROM node:lts-alpine3.20
 WORKDIR /app
 COPY package*.json ./
 RUN npm i
