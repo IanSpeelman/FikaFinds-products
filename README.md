@@ -242,7 +242,6 @@ services:
       start_period: 30s
       timeout: 10s
 ```
-```
 
 ### 5. Start the Application
 
