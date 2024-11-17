@@ -17,7 +17,7 @@ The application is part of a microservices architecture:
 - [**FikaFinds UI**](https://github.com/IanSpeelman/FikaFinds-ui): Frontend interface built with React and Node.js
 - [**Products Service(This repository)**](https://github.com/IanSpeelman/FikaFinds-products): Handles product-related CRUD operations
 - [**Authentication Service**](https://github.com/IanSpeelman/FikaFinds-authentication): handles user authentication
-- **Orders Service**: (Coming soon) Will manage order processing
+- [**Orders Service**](https://github.com/IanSpeelman/FikaFinds-orders): Manages order processing
 
 ## Prerequisites
 
@@ -59,6 +59,7 @@ cd FikaFinds
 git clone https://github.com/IanSpeelman/FikaFinds-ui.git
 git clone https://github.com/IanSpeelman/FikaFinds-products.git
 git clone https://github.com/IanSpeelman/FikaFinds-authentication.git
+git clone https://github.com/IanSpeelman/FikaFinds-orders.git
 ```
 
 ### 3. Environment Setup
@@ -66,19 +67,26 @@ git clone https://github.com/IanSpeelman/FikaFinds-authentication.git
 Create a `.env` file in the root directory and copy it to the UI folder:
 
 ```env
+DBPASS=<database password>
+DBUSER=<database user>
 
-DBPASS=<postgres-password-here>
-DBUSER=<postgres-username-here>
-DBPRODUCTS=<database-name-for-products-services>
-DBUSERS=<database-name-for-users-service>
-USERSDBHOST=users-database
+DBPRODUCTS=products
+DBUSERS=users
+DBORDERS=orders
+
 PRODUCTSDBHOST=products-database
-USERSDBPORT=5433
-PRODUCTSDBPORT=5432
-JWTSECRET=<jwt-secret-here>
+USERSDBHOST=users-database
+ORDERSHOST=orders-database
 
-VITE_AUTHENTICATION_HOST=http://localhost:3001
-VITE_PRODUCT_HOST=http://localhost:3000
+PRODUCTSDBPORT=5432
+USERSDBPORT=5433
+ORDERSDBPORT=5434
+
+JWTSECRET=<JWT secret>
+
+VITE_PRODUCT_HOST=http://<your local ip>:3000
+VITE_AUTHENTICATION_HOST=http://<your local ip>:3001
+VITE_ORDERS_HOST=http://<your local ip>:3002
 ```
 
 **Linux/Mac:**
@@ -105,6 +113,10 @@ services:
       - "5173:5173"
     volumes:
       - ./FikaFinds-ui/src:/app/src
+    depends_on:
+      - products
+      - orders
+      - authentication
     develop:
       watch:
         - path: ./FikaFinds-ui
@@ -118,6 +130,7 @@ services:
     build: ./FikaFinds-products
     ports:
       - "3000:3000"
+    hostname: 0.0.0.0
     volumes:
       - ./FikaFinds-products/src:/app/src/
     env_file:
@@ -138,6 +151,7 @@ services:
     build: ./FikaFinds-authentication
     ports:
       - "3001:3001"
+    hostname: 0.0.0.0
     volumes:
       - ./FikaFinds-authentication/src:/app/src/
     env_file:
@@ -148,6 +162,29 @@ services:
     develop:
       watch:
         - path: ./FikaFinds-authentication
+          target: /
+          ignore:
+            - node_modules/
+            - src/
+          action: rebuild
+
+  orders:
+    build: ./FikaFinds-orders
+    ports:
+      - "3002:3002"
+    hostname: 0.0.0.0
+    volumes:
+      - ./FikaFinds-orders/src:/app/src/
+    env_file:
+      - .env
+    depends_on:
+      orders-database:
+        condition: service_healthy
+      products-database:
+        condition: service_healthy
+    develop:
+      watch:
+        - path: ./FikaFinds-orders
           target: /
           ignore:
             - node_modules/
@@ -187,6 +224,24 @@ services:
       retries: 5
       start_period: 30s
       timeout: 10s
+
+  orders-database:
+    image: postgres:13.16
+    ports:
+      - "${ORDERSDBPORT}:5432"
+    volumes:
+      - "./db3:/var/lib/postgresql/data"
+    environment:
+      POSTGRES_PASSWORD: ${DBPASS}
+      POSTGRES_USER: ${DBUSER}
+      POSTGRES_DB: ${DBORDERS}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DBUSER} -d ${DBORDERS}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+```
 ```
 
 ### 5. Start the Application
@@ -205,51 +260,4 @@ To run in watch mode:
 
 ```bash
 docker compose up --watch
-```
-
-## Development
-
-### Local Development (Without Docker)
-
-1. Install dependencies:
-
-```bash
-cd FikaFinds-products
-npm install
-```
-
-2. Start development server:
-
-```bash
-npm run dev
-```
-
-### Docker Development
-
-Build the image:
-
-```bash
-docker build -t FikaFinds-products .
-```
-
-Run the container:
-
-```bash
-docker run -p 3000:3000 FikaFinds-products
-```
-
-## Project Structure
-
-```
-FikaFinds-products/
-├── src/
-│   ├── controllers/
-│   ├── models/
-│   ├── routes/
-│   ├── utils/
-│   ├── app.ts
-│   └── index.ts
-├── tests/
-├── Dockerfile
-└── package.json
 ```
