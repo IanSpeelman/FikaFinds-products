@@ -23,7 +23,7 @@ const sequelize = new Sequelize(database, user, pass, {
 
 export const Product = sequelize.define("product", {
     name: { type: DataTypes.STRING, allowNull: false, },
-    image: { type: DataTypes.STRING, allowNull: false, },
+    image: { type: DataTypes.TEXT, allowNull: false, },
     price: { type: DataTypes.INTEGER, allowNull: false, },
     category: { type: DataTypes.STRING, allowNull: false, },
     stock: { type: DataTypes.INTEGER, allowNull: true, },
