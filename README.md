@@ -5,7 +5,6 @@
 The Products Service is a crucial component of the FikaFinds e-commerce platform, handling all product-related operations. Built with Node.js and Express, this service provides RESTful APIs for product management.
 
 ## Features
-
 - CRUD operations for products
 - Product search and filtering
 - Product inventory management

@@ -1,8 +1,9 @@
 import { Request, Response } from "express"
 import { addProduct, changeProduct, getAllProducts, getProduct, deleteProduct } from "../models/product"
-import { Product } from "../utils/types"
+import { jwtToken, Product } from "../utils/types"
 import { Product as Database } from "../utils/database"
 import { isCorrectSpecificationFormat, isCorrectImageString } from "../utils/checkSpecificationType"
+import { jwtDecode } from "jwt-decode"
 
 export async function fetchAllProducts(req: Request, res: Response) {
     try {
@@ -19,7 +20,20 @@ export async function fetchAllProducts(req: Request, res: Response) {
     }
 }
 
+
 export async function newProduct(req: Request, res: Response) {
+    try {
+        const token = req.get('Authorization') || ""
+        const decoded: jwtToken = jwtDecode(token)
+        if (decoded.admin !== true || !(decoded.exp > Math.floor(Date.now() / 1000))) {
+            res.status(403).json({ err: "you do not have administrative privileges" })
+        }
+    }
+    catch (err) {
+        res.status(403).json({ err: "you do not have administrative privileges" })
+        return
+    }
+
     const { name, image, price, category, description, specifications } = req.body
     if (name && isCorrectImageString(image) && price && category && description && isCorrectSpecificationFormat(specifications)) {
 
@@ -39,7 +53,6 @@ export async function newProduct(req: Request, res: Response) {
 
 export async function fetchProduct(req: Request, res: Response) {
     const product = await getProduct(Database, parseInt(req.params.id))
-
     if (Object.keys(product).length !== 0) {
         res.status(200).json(product)
     }
@@ -49,6 +62,17 @@ export async function fetchProduct(req: Request, res: Response) {
 }
 
 export async function editProduct(req: Request, res: Response) {
+    try {
+        const token = req.get('Authorization') || ""
+        const decoded: jwtToken = jwtDecode(token)
+        if (decoded.admin !== true || !(decoded.exp > Math.floor(Date.now() / 1000))) {
+            res.status(403).json({ err: "you do not have administrative privileges" })
+        }
+    }
+    catch (err) {
+        res.status(403).json({ err: "you do not have administrative privileges" })
+        return
+    }
     const { name, image, price, category, description, specifications } = req.body
     if (name && isCorrectImageString(image) && price && category && description && isCorrectSpecificationFormat(specifications)) {
 
@@ -65,6 +89,18 @@ export async function editProduct(req: Request, res: Response) {
 }
 
 export async function removeProduct(req: Request, res: Response) {
+    try {
+        const token = req.get('Authorization') || ""
+        const decoded: jwtToken = jwtDecode(token)
+        if (decoded.admin !== true || !(decoded.exp > Math.floor(Date.now() / 1000))) {
+            res.status(403).json({ err: "you do not have administrative privileges" })
+        }
+    }
+    catch (err) {
+        res.status(403).json({ err: "you do not have administrative privileges" })
+        return
+    }
+
     if (await deleteProduct(Database, parseInt(req.params.id))) {
         res.status(204).end()
     }
