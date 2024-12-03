@@ -3,6 +3,8 @@ import { app } from "../app"
 import { jest, describe, test, expect } from "@jest/globals"
 import { Product } from "../utils/database";
 
+const jwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTI1LCJlbWFpbCI6ImlhbnNwZWVsbWFuQGdtYWlsLmNvbSIsImFkbWluIjp0cnVlLCJmaXJzdE5hbWUiOiJJYW4iLCJleHAiOjIwOTMyMzY1NTEsImlhdCI6MTczMzIzNjU1MX0.Gh7Z2GOlZGqmHTs2SeCwBumv66BmOLkr6VpHYH5G1rs"
+
 jest.mock('../utils/database', () => ({
     Product: {
         "id": 27,
@@ -148,7 +150,7 @@ describe("POST /products", () => {
     test("should create product when required fields are passed with body", async () => {
 
 
-        const response = await request(app).post("/products").send({
+        const response = await request(app).post("/products").set('Authorization', jwt).send({
             name: "Hi there, General Kenobi",
             image: "test",
             price: 5,
@@ -169,7 +171,7 @@ describe("POST /products", () => {
         ]
 
         for (let i = 0; i < data.length; i++) {
-            const response = await request(app).post("/products").send(data[i])
+            const response = await request(app).post("/products").set('Authorization', jwt).send(data[i])
             expect(response.status).toBe(406)
         }
 
@@ -193,7 +195,7 @@ describe("PATCH /products/:id", () => {
 
         Product.findAll.mockResolvedValue(returnedProduct)
 
-        const response = await request(app).patch("/products/edit/27").send({
+        const response = await request(app).patch("/products/edit/27").set('Authorization', jwt).send({
             "name": "Hi there, General obi wan",
             "image": "image",
             "price": 6,
@@ -216,7 +218,7 @@ describe("PATCH /products/:id", () => {
         ]
 
         for (let i = 0; i < data.length; i++) {
-            const response = await request(app).patch("/products/edit/27").send(data[i])
+            const response = await request(app).patch("/products/edit/27").set('Authorization', jwt).send(data[i])
 
             expect(response.status).toBe(406)
         }
@@ -230,7 +232,7 @@ describe("DELETE /products/:id", () => {
         Product.destroy.mockResolvedValue(true)
 
 
-        const response = await request(app).delete("/products/10")
+        const response = await request(app).delete("/products/10").set('Authorization', jwt)
         expect(response.status).toBe(204)
     })
 
@@ -238,7 +240,7 @@ describe("DELETE /products/:id", () => {
         Product.destroy.mockResolvedValue(false)
 
 
-        const response = await request(app).delete("/products/10")
+        const response = await request(app).delete("/products/10").set('Authorization', jwt)
         expect(response.status).toBe(404)
     })
 })
